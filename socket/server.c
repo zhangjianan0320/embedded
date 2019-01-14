@@ -9,10 +9,11 @@
 #define MYPORT 8888
 #define BACKLOG 10
 
-int main(void)
+int main(int argc,char **argv)
 {
 	int sockfd;
 	struct sockaddr_in my_addr;
+	char buf[100];
 
 	memset(&my_addr,0,sizeof(my_addr));
 	my_addr.sin_family=AF_INET;
@@ -33,9 +34,20 @@ int main(void)
 
 	if(!fork())
 	{
-		if(send(new_fd,"hellow world!\n",14,0) == -1)
+		while(1)
 		{
-			perror("send");
+		memset(buf,0,sizeof(buf));
+		//if(send(new_fd,"hellow world!\n",14,0) == -1)
+			if(read(sockfd,buf,sizeof(buf)-1))
+			{
+				perror("send");
+			}
+			printf("str:%s",buf);
+			if(strcmp(buf,"quit") == 0)
+			{
+				close(new_fd);
+				exit(0);
+			}
 		}
 		close(new_fd);
 		exit(1);
