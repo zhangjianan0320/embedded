@@ -46,10 +46,18 @@ int main(void)
 		exit(-1);
 	}
 
+	int val=1;
+	int ret=setsockopt(fd,SOL_SOCKET,SO_REUSEADDR,(void *)&val,sizeof(int));
+	if	(ret < 0)
+	{
+		perror("opt");
+		exit(-1);
+	}
 	struct sockaddr_in si;
 	si.sin_family = AF_INET;
 	si.sin_addr.s_addr=htons(INADDR_ANY);
-	si.sin_port=htons(8890);
+	si.sin_port=htons(8891);
+
 
 	if(bind(fd,(struct sockaddr*)&si,sizeof(si)) < 0)
 	{
