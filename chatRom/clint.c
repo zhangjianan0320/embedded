@@ -27,20 +27,21 @@ int main(int argc,char *argv[])
 	while(1)
 	{
 		int num=read(fd,msg,sizeof(msg)-1);
+		//int num=recv(fd,msg,sizeof(msg),0);
+		
 		if(num<=0)
 			break;
 		msg[num]='\0';
-		printf("read:%d",num);
-		//write(STDOUT_FILENO,msg,num);
-		//printf("input:");
-		scanf("%[^\n]",msg);
+		write(STDOUT_FILENO,msg,num);
+		scanf("%s",msg);
 		strcat(msg,"\n");
-		printf("msg len %d  ",(int)strlen(msg));
+
 		write(fd,msg,strlen(msg));
+		//send(fd,msg,strlen(msg),0);
+
 		if(msg[0]=='q')
 			break;
 	}
 	close(fd);
-
-
+	return 0;
 }
