@@ -7,7 +7,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+
 #define MAX 20
+#define PORT 8705
+
 typedef struct sockaddr * sa;
 typedef struct {
 	int s;
@@ -23,8 +27,11 @@ void broadcast(int c,void *msg,int n)
 	pthread_mutex_lock(&m);
 	for(int i=0;i<MAX;i++)
 	{
-		if(cs[i].s!=0&&cs[i].s!=c)
+		if((cs[i].s != 0)&&(cs[i].s != c))
+		{
+			printf("num : %d   ",i);
 			write(cs[i].s,msg,n);
+		}
 	}
 	pthread_mutex_unlock(&m);
 }
@@ -45,15 +52,12 @@ void *func(void *p)
 	int iplen = sprintf(msg,"%s say:",ip);
 
 	char *info = msg+iplen;
-	
-	printf("func\n");
-
 	for(;;)
 	{
 		int len = read(c,info,sizeof(msg)-iplen);
 		if(len<=0)
 			break;
-		if(info[0]=='q'&&info[1])
+		if(info[0]=='q'&&info[1] == 'u')
 		{
 			break;
 		}
@@ -76,22 +80,22 @@ int main(int argc,char **argv)
 	struct sockaddr_in si;
 	si.sin_family=AF_INET;
 	si.sin_addr.s_addr=INADDR_ANY;
-	si.sin_port=htons(8891);
+	si.sin_port=htons(PORT);
 	if(bind(s,(sa)&si,sizeof(si))<0)
 	{
 		perror("bind");
 		exit(0);
 	}
 
-	listen(s,10);
+	listen(s,MAX);
 
 	for(;;)
 	{
-
 		socklen_t len=sizeof(si);
-		printf("accepting\n");
+		//memset(si,0,sizeof(si));
+
 		int c=accept(s,(sa)&si,&len);
-		printf("accept ok\n");
+		printf("c:%d\n",c);
 		if(c<0)
 		{
 			printf("accept 0\n");
@@ -103,6 +107,7 @@ int main(int argc,char **argv)
 			pthread_mutex_lock(&m);
 			for(i=0;i<MAX;i++)
 			{
+				printf("cs%d.s:%d\n",i,cs[i].s);
 				if(i==MAX)
 				{
 					printf("full\n");
@@ -111,19 +116,22 @@ int main(int argc,char **argv)
 				}
 				else
 				{
-					if(cs[i].s==0)
-						continue;
-					cs[i].s=c;
-					inet_ntop(AF_INET,&si.sin_addr,cs[i].ip,16);
-					pthread_t id;
-					if(pthread_create(&id,NULL,func,&cs[i]) <= 0)
+					if(cs[i].s==0 && cs[i].s!=c)
 					{
-						perror("pthread");
+						
+						cs[i].s=c;
+						inet_ntop(AF_INET,&si.sin_addr,cs[i].ip,16);
+						pthread_t id;
+						printf("pthread\n");
+						if(pthread_create(&id,NULL,func,&cs[i]) <= 0)
+						{
+							perror("pthread");
+						}
+						break;
 					}
 				}
 			}
 			pthread_mutex_unlock(&m);
 		}
-
 	}
 }
