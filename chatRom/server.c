@@ -56,8 +56,7 @@ int main(void)
 	struct sockaddr_in si;
 	si.sin_family = AF_INET;
 	si.sin_addr.s_addr=htons(INADDR_ANY);
-	si.sin_port=htons(8891);
-
+	si.sin_port=htons(8888);
 
 	if(bind(fd,(struct sockaddr*)&si,sizeof(si)) < 0)
 	{
@@ -86,7 +85,6 @@ int main(void)
 			char msg[1000];
 			sprintf(msg,"Your IP:%s,welcom to server\n",ip);
 			write(fc,msg,strlen(msg));
-//			close(fc);
 			pthread_t pid;
 			struct Param* p=malloc(sizeof(struct Param));
 			p->fc = fc;
