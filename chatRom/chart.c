@@ -10,11 +10,12 @@
 
 
 #define MAX 20
-#define PORT 8705
+#define PORT 7007
 
 typedef struct sockaddr * sa;
 typedef struct {
 	int s;
+	char name[20];
 	char ip[16];
 }client;
 
@@ -29,7 +30,6 @@ void broadcast(int c,void *msg,int n)
 	{
 		if((cs[i].s != 0)&&(cs[i].s != c))
 		{
-			printf("num : %d   ",i);
 			write(cs[i].s,msg,n);
 		}
 	}
@@ -40,21 +40,31 @@ void *func(void *p)
 {
 	client* q=p;
 	char ip[16];
-
+	char *send = "Please input your name \n eg:name:Tome\n";
 	pthread_mutex_lock(&m);
 	int c=q->s;
 	strcpy(ip,q->ip);
 	pthread_mutex_unlock(&m);
 
-	char msg[1000];
-	int n = sprintf(msg,"welcom chartRom %s!\n",ip);
+	char msg[1000] = {0};
+	int n,len=0;
+	 
+	write(c,send,strlen(send));
+	while(len < 5)
+	{
+		len = read(c,msg,20);
+		printf("msg:%s\n",msg);
+	}
+	printf("strlen:%ld\n",strlen(msg));
+	strncpy(q->name,msg+5,strlen(msg)-6);
+	n=sprintf(msg,"welcome %s!\n",q->name);
 	broadcast(0,msg,n);
-	int iplen = sprintf(msg,"%s say:",ip);
-
+	int iplen = sprintf(msg,"%s say:",q->name);
 	char *info = msg+iplen;
 	for(;;)
 	{
-		int len = read(c,info,sizeof(msg)-iplen);
+		len = read(c,info,sizeof(msg)-iplen);
+		
 		if(len<=0)
 			break;
 		if(info[0]=='q'&&info[1] == 'u')
@@ -66,6 +76,8 @@ void *func(void *p)
 			broadcast(c,msg,len+iplen);
 		}
 	}
+
+
 	pthread_mutex_lock(&m);
 	q->s=0;
 	pthread_mutex_unlock(&m);
@@ -98,7 +110,7 @@ int main(int argc,char **argv)
 		printf("c:%d\n",c);
 		if(c<0)
 		{
-			printf("accept 0\n");
+			printf("accept\n");
 			continue;
 		}
 		
@@ -107,7 +119,7 @@ int main(int argc,char **argv)
 			pthread_mutex_lock(&m);
 			for(i=0;i<MAX;i++)
 			{
-				printf("cs%d.s:%d\n",i,cs[i].s);
+				//printf("cs%d.s:%d\n",i,cs[i].s);
 				if(i==MAX)
 				{
 					printf("full\n");
@@ -122,8 +134,7 @@ int main(int argc,char **argv)
 						cs[i].s=c;
 						inet_ntop(AF_INET,&si.sin_addr,cs[i].ip,16);
 						pthread_t id;
-						printf("pthread\n");
-						if(pthread_create(&id,NULL,func,&cs[i]) <= 0)
+						if(pthread_create(&id,NULL,func,&cs[i]) < 0)
 						{
 							perror("pthread");
 						}
