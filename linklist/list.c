@@ -1,25 +1,5 @@
 #include "list.h"
 
-/*
-int List_Insert(Node *head,void *data)
-{
-	Node *node=head;
-	while(node->next==NULL)
-	{
-		node=node->next;
-	}
-	Node *node_data=malloc(sizeof(Node));
-	if(node==NULL)
-	{
-		return -1;
-	}
-	node->data->data=data;
-	node->data->prev=node;
-	node->next=node;
-	
-	return 0;
-}
-*/
 //创建节点
 Node* create_node(void *data)
 {
@@ -174,11 +154,6 @@ bool del_index_list(ListManage* list,int index)
 	return true;
 }
 
-void show(void *data)
-{
-	int *p = data;
-	printf("%d ",*p);
-}
 
 void show_list(ListManage* list,void (*show)(void *data))
 {
@@ -189,6 +164,17 @@ void show_list(ListManage* list,void (*show)(void *data))
 	printf("\n");
 }
 
+int deal_list(ListManage* list,void (*deal)(void *ctx,void *data),void *ctx)
+{
+	Node* node = list->head;
+	while(NULL != node)
+	{
+		deal(ctx,node->data);
+		node = node->next;
+	}
+}
+
+/*
 int main(void)
 {
 	ListManage *list = create_list();
@@ -205,4 +191,4 @@ int main(void)
 
 	return 0;
 }
-
+*/

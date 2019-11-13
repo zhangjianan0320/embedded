@@ -36,6 +36,7 @@ void *access_list(ListManage *list,int index);
 bool del_index_list(ListManage* list,int index);
 void show(void *data);
 void show_list(ListManage* list,void (*show)(void *data));
+int deal_list(ListManage* list,void (*deal)(void *ctx,void *data),void *ctx);
 #endif	//_LIST_H_
 
 #ifdef __cplusplus
