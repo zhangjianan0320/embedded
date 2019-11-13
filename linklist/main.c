@@ -18,7 +18,7 @@ void max_cb(void *ctx,void *data)
 
 void show_int(void *ctx,void *data)
 {
-	printf("%lld ",(long long)data);
+	printf("%lld\n",(long long)data);
 }
 
 void show_float(void *ctx,void *data)
