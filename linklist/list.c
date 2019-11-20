@@ -1,7 +1,14 @@
 #include "list.h"
 
-typedef void (*HANDEL)(void *,void*);
+//创建节点
+Node* create_node(void *data)
+{
+	Node *node = malloc(sizeof(sizeof(Node)));
+	node->data = data;
+	node->next = NULL;
 
+	return node;
+}
 
 //创建链表
 ListManage* create_list(void)
@@ -12,16 +19,7 @@ ListManage* create_list(void)
 
 	return list;
 }
-//创建节点
-Node* create_node(void *data)
-{
-	Node *node = malloc(sizeof(sizeof(Node)));
-	node->data = data;
-	node->next = NULL;
 
-	return node;
-}
-//销毁链表
 void destory_list(ListManage *list)
 {
 	while(del_head_list(list))
@@ -166,8 +164,7 @@ void show_list(ListManage* list,void (*show)(void *data))
 	printf("\n");
 }
 
-
-int deal_list(ListManage* list,HANDEL deal,void *ctx)
+int deal_list(ListManage* list,void (*deal)(void *ctx,void *data),void *ctx)
 {
 	Node* node = list->head;
 	while(NULL != node)
@@ -177,3 +174,21 @@ int deal_list(ListManage* list,HANDEL deal,void *ctx)
 	}
 }
 
+/*
+int main(void)
+{
+	ListManage *list = create_list();
+	int arr[] = {1,2,3,4,5,6,7,8,9};
+
+	for(int i=0;i<9;i++)
+	{
+		add_tail_list(list,arr+i);
+		//add_head_list(list,arr+i);
+		printf("size:%d\n",list->size);
+	}
+
+	show_list(list,show);
+
+	return 0;
+}
+*/
