@@ -21,11 +21,6 @@ typedef struct _ListManage
 {
 	Node *head;
 	unsigned int size;
-	void (*create_node)(void *data);
-	void (*destory_node)(void *data);
-
-
-
 }ListManage;
 
 
