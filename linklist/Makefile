@@ -1,7 +1,11 @@
-object = main.o list.o
+#object = main.o list.o add.o
+source = $(wildcard *.c)
+object = $(patsubst %.c,%.o,$(source))
 
-edit : $(object)
-	cc $(object) -o edit
+OBJ = edit
+
+$(OBJ) : $(object)
+	cc $(object) -o $(OBJ)
 
 $(object):list.h
 
@@ -10,5 +14,5 @@ $(object):list.h
 
 .PHONY:clean
 clean:
-	rm -rf *.o
+	rm -rf *.o $(OBJ)
 

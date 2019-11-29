@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "list.h"
+#include "add.h"
 
 void sum_cb(void *ctx,void *data)
 {
@@ -50,6 +51,7 @@ int main(int argc,const char *argv[])
 	deal_list(list,max_cb,&max);
 	printf("max=%d\n",max);
 
+	printf("add :%ld\n",add(10,12));
 /*
 	ListManage* f_list=create_list();
 
