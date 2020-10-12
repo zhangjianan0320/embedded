@@ -4,6 +4,11 @@
 int main(int argc,char **argv)
 {
 	int ch=0;
+	if(argc == 1)
+	{
+		printf("example %s -a 123 -b -c\n",argv[0]);
+		printf("example %s -a 123 -b -c456\n",argv[0]);
+	}
 	// a:bc::  a: 表示必须有一个参数空格隔开 b表示不需要入参 如果有也会被忽略 c::表示可以跟一个入参也可以不跟，如果跟一个入参，参数必须紧跟在选项后不能以空格隔开
 	while((ch = getopt(argc,argv,"a:bc::")) != -1)
 	{
@@ -45,6 +50,5 @@ int main(int argc,char **argv)
 		}
 	}
 
-	printf("optarg\n");
 	return 0;
 }
